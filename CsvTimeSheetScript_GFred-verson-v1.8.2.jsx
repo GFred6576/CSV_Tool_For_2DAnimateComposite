@@ -31,9 +31,9 @@ by: 青涧
    */
   function undo(_name, _fn) {
     app.beginUndoGroup(_name);
-    _fn()
+    _fn();
     app.endUndoGroup();
-    return
+    return;
   }
   function CsvTimeSheetScript(thisObj) {
     //这是脚本主函数的定义
@@ -165,14 +165,16 @@ by: 青涧
       };
       //更改表类型
       sheetTypeList.onChange = function () {
-        if (sheetTypeList.selection.index == sheetTypeList.items.length - 1) {
+        if (this.selection == null) return;
+
+        if (sheetTypeList.selection.index == 2) {
           var click = confirm("Reset default?", "");
           if (click == true) {
             this.items[0].text = "动画";
             this.items[1].text = "原画";
             app.settings.saveSetting(scriptName, "dropTypeNameList", "动画,原画,Reset");
             customText.text = "动画";
-            this.selection = 0;
+            this.selection = 1;
             return;
           }
         } else {
@@ -191,8 +193,13 @@ by: 青涧
             listItemArray = keyAnimetionlistItemArray;
           }
 
-          text_2.text = decodeURI(timeSheetFile.name);
-          text_4.text = mySheetArray.length - 2;
+          try {
+            text_2.text = decodeURI(timeSheetFile.name);
+            text_4.text = mySheetArray.length - 2;
+          } catch (e) {
+            // $.writeln(e.line + e.message);
+          }
+
           for (i = 0; i < listItemArray.length; i++) {
             var item1 = myList.add("item", listItemArray[i][1]);
             item1.subItems[0].text = listItemArray[i][2];
@@ -208,7 +215,7 @@ by: 青涧
           importCsv(csvFile, sheetTypeList.items[1].text, sheetTypeList.items[0].text);
         }
         if (e.button == 2) {
-          var f = File(app.settings.getSetting(scriptName, "myPath"))
+          var f = File(app.settings.getSetting(scriptName, "myPath"));
           importCsv(f, sheetTypeList.items[1].text, sheetTypeList.items[0].text);
         }
       });
@@ -377,8 +384,8 @@ by: 青涧
       });
       but_about.onClick = function () {
         var t = 'version:' + version + "\n脚本原作者：清涧\n修改：GFred\n\nbug反馈：qq:1540026576\n\n修改内容：\n增加了'动画、原画'关键字可自定义编辑,\n增加了多选图层后自动尝试批量应用打表,\n增加了修复AE编码功能，原因是中文系统下AE编码为GBK，部分脚本会篡改掉AE的编码，这也是一部分脚本会突然失灵的原因（参见motion4，启动后csv脚本就会无法正常读取文件，除非重新修改编码）";
-        alert(t, 'message:')
-      }
+        alert(t, 'message:');
+      };
 
 
 
